@@ -1,5 +1,8 @@
 public class main {
+<<<<<<< HEAD:main.java
 
+=======
+>>>>>>> 49e607b65df1df4e41e9e3e2712a7f904dd70aad:Main.java
     public static void main(String[] args){
         HashMap<String, String> opcodes = new HashMap<String,String>();
         opcodes.put("ADD","00011000");//18
@@ -148,3 +151,5 @@ public class main {
 
     }
 }
+
+// This is a comment
