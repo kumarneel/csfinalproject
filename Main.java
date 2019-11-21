@@ -81,16 +81,19 @@ public class Main {
             assemblyMap.put(Integer.toString(counter),words);
             counter++;
         }
+        String PROGNAME = "";
         int LOCCTR = 0;
         int stAd = 0;
         int PROGLEN = 0;
-        //Pass 1
+        //PASS 1
 
         //if opcode = 'start' then...
         String firstLine[] = assemblyMap.get("0");
         if (firstLine[1].equals("START")){
+          PROGNAME = firstLine[0];
           //save #[OPERAND] as starting address
-          stAd = Integer.parseInt(firstLine[2]);
+          // String temp = firstLine[2];
+          stAd = Integer.parseInt(String.valueOf(firstLine[2]),16);
           //initialize LOCCTR to starting address
           LOCCTR = stAd;
           //write line to intermediate File
@@ -106,7 +109,7 @@ public class Main {
 
         //initialize HashMap
           HashMap<String, Integer> SYMTAB  = new LinkedHashMap<String,Integer>();
-          HashMap<Integer,Integer> LOCTAB = new LinkedHashMap<Integer,Integer>();
+          HashMap<Integer,Integer> LOCTAB = new LinkedHashMap<Integer,Integer>(); //intermediate file
 
           for(int i = 1; i < assemblyMap.size();i++){
                 String currentLine[] = assemblyMap.get(String.valueOf(i));
@@ -159,47 +162,30 @@ public class Main {
             System.out.println("line index: " + index + " location -> " + String.format("%X",LOCTAB.get(index)));
           }
 
-
-        //  }
-          //while OPCODE != END
-
-            // if this != comment then
-              // for sym in SYMTAB
-                // if sym == label then
-                  // Set error flag
-                // else
-                  // Insert (LABEL,LOCCTR) into SYMTAB
-              // endfor
-              // if found then
-                // add 3 {instruction length} to LOCCTR
-              // else if OPCODE = 'WORD' then
-                // add 3 to LOCCTR
-              // else if OPCODE = 'RESW' then
-                // add 3 * #[OPERAND] to LOCCTR
-              // else if OPCODE = 'RESB'
-                // add #[OPERAND] to LOCCTR
-              // else if OPCODE = 'BYTE' then
-                // find length of constant in bytes
-                // add length to LOCCTR
-              // else
-                // set error flag (invalid operation code)
-            // end if not comment
-          // write line to intermediate file
-          // read next input line
-        // end {while not end}
-      // write last line to intermediate file
-      // save (LOCCTR - starting address)as program length
-    // end {pass 1}
-
-
-
       //PASS 2
       //if opcode = 'start' then
-          //begin
-          //write listing line
-          //read next input Line
-          //end if START
+      String passOneStart[] = assemblyMap.get("0");
+      if (passOneStart[1].equals("START")){
+        //begin
+      }else{
+        return;
+      }
+      System.out.print("H^" + PROGNAME);
+      for(int i = 0; i < 6-PROGNAME.length();i++){
+        System.out.print(" ");
+      }
+      int len = String.format("%X",stAd).length();
+      System.out.print("^");
+      for(int i = 0; i < (6-len);i++){
+        System.out.print("0");
+      }
+      System.out.print(String.format("%X",stAd) + "^");
 
+      len = String.format("%X",PROGLEN).length();
+      for(int i = 0; i < (6-len);i++){
+        System.out.print("0");
+      }
+      System.out.println(String.format("%X",PROGLEN));
 
           //write Header record to object program
           //initialize first Text record
