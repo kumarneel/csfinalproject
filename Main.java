@@ -72,7 +72,6 @@ public class Main {
 
         //open and read input file and store into map...
         File file = new File("/Users/neelkumar 1/Desktop/csfinalproject/assembly.asm");
-
         HashMap<String, String[]> assemblyMap = new LinkedHashMap<String, String[]>();
         Scanner sc = new Scanner(file);
         int counter = 0;
@@ -82,9 +81,9 @@ public class Main {
             assemblyMap.put(Integer.toString(counter),words);
             counter++;
         }
-        System.out.print(assemblyMap.keySet());
-        int LOCCTR;
-        int stAd;
+        int LOCCTR = 0;
+        int stAd = 0;
+        int PROGLEN = 0;
         //Pass 1
 
         //if opcode = 'start' then...
@@ -99,23 +98,67 @@ public class Main {
         }
         else{
           //initialize LOCCTR to 0
-          LOCCTR = 0;
+          LOCCTR = 0x00;
         }
-          //begin
-          //write line to intermediate File
-          //read next input line
-        //end {if START}
-        //else
 
-          //save starting address
+        //read next input line
+        //store the location in a pairing array, right side of pair is index, left side is the location...
 
+        //initialize HashMap
+          HashMap<String, Integer> SYMTAB  = new LinkedHashMap<String,Integer>();
 
+          for(int i = 1; i < assemblyMap.size();i++){
+                String currentLine[] = assemblyMap.get(String.valueOf(i));
 
+                String label = currentLine[0];
+                String check = currentLine[1];
+                String operand = currentLine[2];
 
-            //while(counter != words.size){
+                if(check.equals("END")){
+                    break;
+                }
+                //check if there is a symbol in the label field
+                if (!label.equals(" ")) {
+                    //check if the label already exists in the SYMTAB
+                    if ((SYMTAB.containsKey(label))){
+                      System.out.print("DUPLICATE SYMBOL");
+                      return;
+                    }else{
+                        //insert into SYMTAB
+                        SYMTAB.put(label,LOCCTR);
+                    }
+                }
+                //add to LOCCTR
+
+                if(check.charAt(0) == '+'){
+                  LOCCTR += 0x04;
+                }else if(opcodes.containsKey(check)){
+                  LOCCTR += 0x03;
+                }else if(check.equals("WORD")){
+                  LOCCTR += 0x03;
+                }else if(check.equals("RESW")){
+                  LOCCTR += 0x03 * Integer.parseInt(operand);
+                }else if(check.equals("RESB")){
+                  LOCCTR += Integer.parseInt(operand);
+                }else if(check.equals("BYTE")){
+                    LOCCTR += operand.length()-2;
+                } else if(check.equals("BASE")){
+                    //comment line do nothing...
+                } else {
+                    System.out.println("INVALID OPERATION CODE");
+                    return;
+                }
+          }
+          //calculate program length
+          PROGLEN = LOCCTR - stAd;
+          for(String key: SYMTAB.keySet()){
+              System.out.println("LABEL: " + key + ": location -> " + String.format("%X",SYMTAB.get(key)));
+          }
+
 
         //  }
           //while OPCODE != END
+
             // if this != comment then
               // for sym in SYMTAB
                 // if sym == label then
