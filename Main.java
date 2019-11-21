@@ -9,65 +9,65 @@ public class Main {
     public static void main(String[] args) throws FileNotFoundException{
         //OPTAB - HashMap of commands and their corresponding operation codes
 
-        HashMap<String, String> opcodes = new HashMap<String,String>();
-        opcodes.put("ADD",   "00011000");//18
-        opcodes.put("ADDF",  "01011000");//58
-        opcodes.put("ADDR",  "10010000");//90
-        opcodes.put("AND",   "01000000");//40
-        opcodes.put("CLEAR", "10110100");//B4
-        opcodes.put("COMP",  "00101000");//28
-        opcodes.put("COMPF", "10001000");//88
-        opcodes.put("COMPR", "10100000");//A0
-        opcodes.put("DIV",   "00100100");//24
-        opcodes.put("DIVF",  "01100100");//64
-        opcodes.put("DIVR",  "10011100");//9C
-        opcodes.put("FIX",   "11000100");//C4
-        opcodes.put("FLOAT", "11000000");//C0
-        opcodes.put("HIO",   "11110100");//F4
-        opcodes.put("J",     "00111100");//3C
-        opcodes.put("JEQ",   "00110000");//30
-        opcodes.put("JGT",   "00110100");//34
-        opcodes.put("JLT",   "00111000");//38
-        opcodes.put("JSUB",  "01001000");//48
-        opcodes.put("LDA",   "00000000");//00
-        opcodes.put("LDB",   "01101000");//68
-        opcodes.put("LDCH",  "01010000");//50
-        opcodes.put("LDF",   "01110000");//70
-        opcodes.put("LDL",   "00001000");//08
-        opcodes.put("LDS",   "01101100");//6C
-        opcodes.put("LDT",   "01110100");//74
-        opcodes.put("LDX",   "00000100");//04
-        opcodes.put("LPS",   "11010000");//D0
-        opcodes.put("MULF",  "0110000");//60
-        opcodes.put("MULR",  "10011000");//98
-        opcodes.put("NORM",  "11001000");//C8
-        opcodes.put("OR",    "01000100");//44
-        opcodes.put("RD",    "11011000");//D8
-        opcodes.put("RMO",   "10101100");//AC
-        opcodes.put("RSUB",  "01001100");//4C
-        opcodes.put("SHIFTL","10100100");//A4
-        opcodes.put("SHIFTR","10101000");//A8
-        opcodes.put("SIO",   "11110000");//F0
-        opcodes.put("SSK",   "11101100");//EC
-        opcodes.put("STA",   "00001100");//0C
-        opcodes.put("STB",   "01111000");//78
-        opcodes.put("STCH",  "01010100");//54
-        opcodes.put("STF",   "10000000");//80
-        opcodes.put("STI",   "11010100");//D4
-        opcodes.put("STL",   "00010100");//14
-        opcodes.put("STS",   "01111100");//7C
-        opcodes.put("STSW",  "11101000");//E8
-        opcodes.put("STT",   "10000100");//84
-        opcodes.put("STX",   "10000000");//10
-        opcodes.put("SUB",   "00011100");//1C
-        opcodes.put("SUBF",  "01101100");//5C
-        opcodes.put("SUBR",  "10010100");//94
-        opcodes.put("SVC",   "10110000");//B0
-        opcodes.put("TD",    "11100000");//E0
-        opcodes.put("TIO",   "11111000");//F8
-        opcodes.put("TIX",   "00101100");//2C
-        opcodes.put("TIXR",  "10111000");//B8
-        opcodes.put("WD",    "11011100");//DC
+        HashMap<String, Integer> OPTAB = new HashMap<String,Integer>();
+        OPTAB.put("ADD",   0x18);//18
+        OPTAB.put("ADDF",  0x58);//58
+        OPTAB.put("ADDR",  0x90);//90
+        OPTAB.put("AND",   0x40);//40
+        OPTAB.put("CLEAR", 0xB4);//B4
+        OPTAB.put("COMP",  0x28);//28
+        OPTAB.put("COMPF", 0x88);//88
+        OPTAB.put("COMPR", 0xA0);//A0
+        OPTAB.put("DIV",   0x24);//24
+        OPTAB.put("DIVF",  0x64);//64
+        OPTAB.put("DIVR",  0x9C);//9C
+        OPTAB.put("FIX",   0xC4);//C4
+        OPTAB.put("FLOAT", 0xC0);//C0
+        OPTAB.put("HIO",   0xF4);//F4
+        OPTAB.put("J",     0x3C);//3C
+        OPTAB.put("JEQ",   0x30);//30
+        OPTAB.put("JGT",   0x34);//34
+        OPTAB.put("JLT",   0x38);//38
+        OPTAB.put("JSUB",  0x48);//48
+        OPTAB.put("LDA",   0x00);//00
+        OPTAB.put("LDB",   0x68);//68
+        OPTAB.put("LDCH",  0x50);//50
+        OPTAB.put("LDF",   0x70);//70
+        OPTAB.put("LDL",   0x08);//08
+        OPTAB.put("LDS",   0x6C);//6C
+        OPTAB.put("LDT",   0x74);//74
+        OPTAB.put("LDX",   0x04);//04
+        OPTAB.put("LPS",   0xD0);//D0
+        OPTAB.put("MULF",  0x60);//60
+        OPTAB.put("MULR",  0x98);//98
+        OPTAB.put("NORM",  0xC8);//C8
+        OPTAB.put("OR",    0x44);//44
+        OPTAB.put("RD",    0xD8);//D8
+        OPTAB.put("RMO",   0xAC);//AC
+        OPTAB.put("RSUB",  0x4C);//4C
+        OPTAB.put("SHIFTL",0xA4);//A4
+        OPTAB.put("SHIFTR",0xA8);//A8
+        OPTAB.put("SIO",   0xF0);//F0
+        OPTAB.put("SSK",   0xEC);//EC
+        OPTAB.put("STA",   0x0C);//0C
+        OPTAB.put("STB",   0x78);//78
+        OPTAB.put("STCH",  0x54);//54
+        OPTAB.put("STF",   0x80);//80
+        OPTAB.put("STI",   0xD4);//D4
+        OPTAB.put("STL",   0x14);//14
+        OPTAB.put("STS",   0x7C);//7C
+        OPTAB.put("STSW",  0xE8);//E8
+        OPTAB.put("STT",   0x84);//84
+        OPTAB.put("STX",   0x10);//10
+        OPTAB.put("SUB",   0x1C);//1C
+        OPTAB.put("SUBF",  0x5C);//5C
+        OPTAB.put("SUBR",  0x94);//94
+        OPTAB.put("SVC",   0xB0);//B0
+        OPTAB.put("TD",    0xE0);//E0
+        OPTAB.put("TIO",   0xF8);//F8
+        OPTAB.put("TIX",   0x2C);//2C
+        OPTAB.put("TIXR",  0xB8);//B8
+        OPTAB.put("WD",    0xDC);//DC
 
 
         //open and read input file and store into map...
@@ -106,6 +106,7 @@ public class Main {
 
         //initialize HashMap
           HashMap<String, Integer> SYMTAB  = new LinkedHashMap<String,Integer>();
+          HashMap<Integer,Integer> LOCTAB = new LinkedHashMap<Integer,Integer>();
 
           for(int i = 1; i < assemblyMap.size();i++){
                 String currentLine[] = assemblyMap.get(String.valueOf(i));
@@ -113,7 +114,7 @@ public class Main {
                 String label = currentLine[0];
                 String check = currentLine[1];
                 String operand = currentLine[2];
-
+                LOCTAB.put(i,LOCCTR);
                 if(check.equals("END")){
                     break;
                 }
@@ -132,7 +133,7 @@ public class Main {
 
                 if(check.charAt(0) == '+'){
                   LOCCTR += 0x04;
-                }else if(opcodes.containsKey(check)){
+                }else if(OPTAB.containsKey(check)){
                   LOCCTR += 0x03;
                 }else if(check.equals("WORD")){
                   LOCCTR += 0x03;
@@ -152,7 +153,10 @@ public class Main {
           //calculate program length
           PROGLEN = LOCCTR - stAd;
           for(String key: SYMTAB.keySet()){
-              System.out.println("LABEL: " + key + ": location -> " + String.format("%X",SYMTAB.get(key)));
+              System.out.println("LABEL: " + key + " location -> " + String.format("%X",SYMTAB.get(key)));
+          }
+          for(Integer index: LOCTAB.keySet()){
+            System.out.println("line index: " + index + " location -> " + String.format("%X",LOCTAB.get(index)));
           }
 
 
