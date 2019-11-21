@@ -8,6 +8,7 @@ public class Main {
 
     public static void main(String[] args) throws FileNotFoundException{
         //OPTAB - HashMap of commands and their corresponding operation codes
+
         HashMap<String, String> opcodes = new HashMap<String,String>();
         opcodes.put("ADD",   "00011000");//18
         opcodes.put("ADDF",  "01011000");//58
