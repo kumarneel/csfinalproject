@@ -4,7 +4,7 @@ public class ObjectCode {
     private int nixbpe[] = new int[6];
     private String addrMode = "";
     private int objectCode = 0;
-
+    private String format = "";
     public int[] getFlags(){
       return nixbpe;
     }
@@ -22,6 +22,10 @@ public class ObjectCode {
     }
     public int getObjectCode(){
         return objectCode;
+    }
+
+    public void setFormat(String format){
+        this.format = format; 
     }
     public void calculateObjectCode(){
 

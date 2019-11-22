@@ -3,7 +3,7 @@ import java.io.File;
 import java.util.Scanner;
 import java.io.FileNotFoundException;
 
-public class Main extends ObjectCode {
+public class Main{
     public static void main(String[] args) throws FileNotFoundException{
         //OPTAB - HashMap of commands and their corresponding operation codes
         HashMap<String, Integer> OPTAB = new HashMap<String,Integer>();
@@ -68,65 +68,67 @@ public class Main extends ObjectCode {
         OPTAB.put("WD",    0xDC);//DC
 
         HashMap<String, String> FMTAB = new HashMap<String, String>();
-        FMTAB.put("ADD", "3/4");
-        FMTAB.put("ADDF", "3/4");
+        FMTAB.put("ADD", "3");
+        FMTAB.put("ADDF", "3");
         FMTAB.put("ADDR", "2");
-        FMTAB.put("AND", "3/4");
+        FMTAB.put("AND", "3");
         FMTAB.put("CLEAR", "2");
-        FMTAB.put("COMP", "3/4");
-        FMTAB.put("COMPF", "3/4");
+        FMTAB.put("COMP", "3");
+        FMTAB.put("COMPF", "3");
         FMTAB.put("COMPR", "2");
-        FMTAB.put("DIV",   "3/4");
-        FMTAB.put("DIVF",  "3/4");
+        FMTAB.put("DIV",   "3");
+        FMTAB.put("DIVF",  "3");
         FMTAB.put("DIVR",  "2");
         FMTAB.put("FIX",   "1");
         FMTAB.put("FLOAT", "1");
         FMTAB.put("HIO",   "1");
-        FMTAB.put("J",     "3/4");
-        FMTAB.put("JEQ",   "3/4");
-        FMTAB.put("JGT",   "3/4");
-        FMTAB.put("JLT",   "3/4");
-        FMTAB.put("JSUB",  "3/4");
-        FMTAB.put("LDA",   "3/4");
-        FMTAB.put("LDB",   "3/4");
-        FMTAB.put("LDCH",  "3/4");
-        FMTAB.put("LDF",   "3/4");
-        FMTAB.put("LDL",   "3/4");
-        FMTAB.put("LDS",   "3/4");
-        FMTAB.put("LDT",   "3/4");
-        FMTAB.put("LDX",   "3/4");
-        FMTAB.put("LPS",   "3/4");
-        FMTAB.put("MUL",   "3/4");
-        FMTAB.put("MULF",  "3/4");
+        FMTAB.put("J",     "3");
+        FMTAB.put("JEQ",   "3");
+        FMTAB.put("JGT",   "3");
+        FMTAB.put("JLT",   "3");
+        FMTAB.put("JSUB",  "3");
+        FMTAB.put("LDA",   "3");
+        FMTAB.put("LDB",   "3");
+        FMTAB.put("LDCH",  "3");
+        FMTAB.put("LDF",   "3");
+        FMTAB.put("LDL",   "3");
+        FMTAB.put("LDS",   "3");
+        FMTAB.put("LDT",   "3");
+        FMTAB.put("LDX",   "3");
+        FMTAB.put("LPS",   "3");
+        FMTAB.put("MUL",   "3");
+        FMTAB.put("MULF",  "3");
         FMTAB.put("MULR",  "2");
         FMTAB.put("NORM",  "1");
-        FMTAB.put("OR",    "3/4");
-        FMTAB.put("RD",    "3/4");
+        FMTAB.put("OR",    "3");
+        FMTAB.put("RD",    "3");
         FMTAB.put("RMO",   "2");
-        FMTAB.put("RSUB",  "3/4");
+        FMTAB.put("RSUB",  "3");
         FMTAB.put("SHIFTL","2");
         FMTAB.put("SHIFTR","2");
         FMTAB.put("SIO",   "1");
-        FMTAB.put("SSK",   "3/4");
-        FMTAB.put("STA",   "3/4");
-        FMTAB.put("STB",   "3/4");
-        FMTAB.put("STCH",  "3/4");//54
-        FMTAB.put("STF",   "3/4");//80
-        FMTAB.put("STI",   "3/4");//D4
-        FMTAB.put("STL",   "3/4");//14
-        FMTAB.put("STS",   "3/4");//7C
-        FMTAB.put("STSW",  "3/4");//E8
-        FMTAB.put("STT",   "3/4");//84
-        FMTAB.put("STX",   "3/4");//10
-        FMTAB.put("SUB",   "3/4");//1C
-        FMTAB.put("SUBF",  "3/4");//5C
-        FMTAB.put("SUBR",  "2");//94
-        FMTAB.put("SVC",   "2");//B0
-        FMTAB.put("TD",    "3/4");//E0
-        FMTAB.put("TIO",   "1");//F8
-        FMTAB.put("TIX",   "3/4");//2C
-        FMTAB.put("TIXR",  "2");//B8
-        FMTAB.put("WD",    "3/4");//DC
+        FMTAB.put("SSK",   "3");
+        FMTAB.put("STA",   "3");
+        FMTAB.put("STB",   "3");
+        FMTAB.put("STCH",  "3");
+        FMTAB.put("STF",   "3");
+        FMTAB.put("STI",   "3");
+        FMTAB.put("STL",   "3");
+        FMTAB.put("STS",   "3");
+        FMTAB.put("STSW",  "3");
+        FMTAB.put("STT",   "3");
+        FMTAB.put("STX",   "3");
+        FMTAB.put("SUB",   "3");
+        FMTAB.put("SUBF",  "3");
+        FMTAB.put("SUBR",  "2");
+        FMTAB.put("SVC",   "2");
+        FMTAB.put("TD",    "3");
+        FMTAB.put("TIO",   "1");
+        FMTAB.put("TIX",   "3");
+        FMTAB.put("TIXR",  "2");
+        FMTAB.put("WD",    "3");
+
+
 
 
 
@@ -255,6 +257,7 @@ public class Main extends ObjectCode {
         }
         if (check.charAt(0) == '+') {
           nixbpe[5] = 1;
+          // object.setFormat("4");
         }
         String[] delimit = operand.split(",");
         if (delimit.length > 1) {
@@ -262,6 +265,7 @@ public class Main extends ObjectCode {
             nixbpe[2] = 1;
           }
         }
+
         System.out.print(operand + ": ");
         for(int j = 0; j < 6;j++){
           System.out.print(nixbpe[j] + " ");
@@ -270,6 +274,12 @@ public class Main extends ObjectCode {
         if(check.equals("BASE")){
           continue;
         }
+        if(FMTAB.containsKey(check)){
+          String temp = FMTAB.get(check);
+          object.setFormat(temp.toString());
+          System.out.println(temp);
+        }
+
         object.setFlags(nixbpe);
         opcode.put(i,object.getObjectCode());
       }
@@ -279,7 +289,6 @@ public class Main extends ObjectCode {
       // System.out.println();
 
       // --------  End Opcode Calc --------
-
 
       //PASS 2
       //if opcode = 'start' then
