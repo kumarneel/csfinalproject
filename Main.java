@@ -71,7 +71,7 @@ public class Main {
 
 
         //open and read input file and store into map...
-        File file = new File("/Users/neelkumar 1/Desktop/csfinalproject/assembly.asm");
+        File file = new File("assembly.asm");
         HashMap<String, String[]> assemblyMap = new LinkedHashMap<String, String[]>();
         Scanner sc = new Scanner(file);
         int counter = 0;
@@ -162,6 +162,52 @@ public class Main {
             System.out.println("line index: " + index + " location -> " + String.format("%X",LOCTAB.get(index)));
           }
 
+
+      // --------  Start OpCode Calculation --------
+      Map<Integer, Opcode> opcode = new HashMap<Integer, Opcode>();
+
+      for (int i = 0; i < assemblyMap.size(); i++) {
+        String line[] = assemblyMap.get(String.valueOf(i));
+        Opcode object = new Opcode();
+        int[] nixbpe = new int[]{0,0,0,0,0,0};
+
+        // Addressing Mode
+        String operand = line[2];
+        if (operand.charAt(0) == '@') {
+          object.setAddrMode("Indirect");
+          nixbpe[0] = 1;
+        }
+        else if (operand.charAt(0) == '#') {
+          object.setAddrMode("Immediate");
+          nixbpe[1] = 1;
+        }
+        else {
+          object.setAddrMode("Simple");
+          nixbpe[1] = 1;
+          nixbpe[0] = 1;
+        }
+
+        String[] delimit = operand.split(",");
+        if (delimit.length > 1) {
+          if (delimit[1] == "X"){
+            nixbpe[2] = 1;
+            // NOT WORKING FOR SOME REASON?
+          }
+        }
+
+        object.setFlags(nixbpe);
+        opcode.put(i,object);
+      }
+
+      // For Testing
+      int[] test = opcode.get(5).getFlags();
+      for(int i = 0; i < 6; i ++) {
+        System.out.print(test[i] + "|");
+      }
+      System.out.println();
+      // --------  End Opcode Calc --------
+
+
       //PASS 2
       //if opcode = 'start' then
       String passOneStart[] = assemblyMap.get("0");
@@ -170,6 +216,8 @@ public class Main {
       }else{
         return;
       }
+
+      // ------  Begin Header Record  -------
       System.out.print("H^" + PROGNAME);
       for(int i = 0; i < 6-PROGNAME.length();i++){
         System.out.print(" ");
@@ -186,6 +234,25 @@ public class Main {
         System.out.print("0");
       }
       System.out.println(String.format("%X",PROGLEN));
+      // End Header Record
+
+      // Begin Refer Record?
+      // Begin Define Record?
+
+      // -------  Begin Text Record  ---------
+      System.out.print("T^");
+      // Starting Address
+      len = String.format("%X",stAd).length();
+      for(int i = 0; i < (6-len);i++){
+        System.out.print("0");
+      }
+      System.out.print(String.format("%X",stAd) + "^");
+      // Object Code Length
+      // TBD
+      System.out.println(" ");
+
+      // Begin End Record
+
 
           //write Header record to object program
           //initialize first Text record
