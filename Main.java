@@ -228,44 +228,55 @@ public class Main{
 
 
       // --------  Start OpCode Calculation --------
+      int B = 0;
       Map<Integer, Integer> opcode = new HashMap<Integer, Integer>();
-      for (int i = 0; i < assemblyMap.size(); i++) {
+      for (int i = 1; i < assemblyMap.size(); i++) {
         String line[] = assemblyMap.get(String.valueOf(i));
-        ObjectCode object = new ObjectCode();
+        String addrMode = "";
+        int objectCode = 0;
+        int format = 0;
+        int DISP, TA, X = 0 ;
+        int PC = LOCTAB.get(i+1);
         int[] nixbpe = new int[]{0,0,0,0,0,0};
         // Addressing Mode
         String operand = line[2];
         String check = line[1];
+        if(SYMTAB.containsKey(operand)){
+            TA = SYMTAB.get(operand);
+        }
+        if((!SYMTAB.containsKey("BASE")) && check.equals("BASE")){
+            SYMTAB.put("BASE",SYMTAB.get(operand));
+            B = SYMTAB.get(operand);
+        }
         if(check.equals("BYTE") ||check.equals("WORD") || check.equals("RESB")||check.equals("RESW")){
-          break;
+            break;
         }
         if (operand.charAt(0) == '@'){
-          object.setAddrMode("Indirect");
           nixbpe[0] = 1;
           nixbpe[1] = 0;
           nixbpe[2] = 0;
         } else if (operand.charAt(0) == '#') {
-          object.setAddrMode("Immediate");
+          String temp = operand.substring(1);
+          if(SYMTAB.containsKey(temp)){
+            TA = SYMTAB.get(temp);
+          }else{
+            TA = Integer.parseInt(temp);
+          }
           nixbpe[0] = 0;
           nixbpe[1] = 1;
           nixbpe[2] = 0;
         }
         else {
-          object.setAddrMode("Simple");
           nixbpe[0] = 1;
           nixbpe[1] = 1;
-        }
-        if (check.charAt(0) == '+') {
-          nixbpe[5] = 1;
-          // object.setFormat("4");
         }
         String[] delimit = operand.split(",");
         if (delimit.length > 1) {
           if (delimit[1].equals("X")){
             nixbpe[2] = 1;
+              X = 1;
           }
         }
-
         System.out.print(operand + ": ");
         for(int j = 0; j < 6;j++){
           System.out.print(nixbpe[j] + " ");
@@ -275,13 +286,13 @@ public class Main{
           continue;
         }
         if(FMTAB.containsKey(check)){
-          String temp = FMTAB.get(check);
-          object.setFormat(temp.toString());
-          System.out.println(temp);
+          format = Integer.parseInt(FMTAB.get(check));
+        }
+        if (check.charAt(0) == '+') {
+          nixbpe[5] = 1;
+          format = 4;
         }
 
-        object.setFlags(nixbpe);
-        opcode.put(i,object.getObjectCode());
       }
 
       // For Testing
