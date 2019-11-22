@@ -81,6 +81,8 @@ public class Main {
             assemblyMap.put(Integer.toString(counter),words);
             counter++;
         }
+        sc.close();
+
         String PROGNAME = "";
         int LOCCTR = 0;
         int stAd = 0;
