@@ -128,11 +128,6 @@ public class Main{
         FMTAB.put("TIXR",  "2");
         FMTAB.put("WD",    "3");
 
-
-
-
-
-
         //open and read input file and store into map...
         File file = new File("assembly.asm");
         HashMap<String, String[]> assemblyMap = new LinkedHashMap<String, String[]>();
@@ -230,12 +225,14 @@ public class Main{
       // --------  Start OpCode Calculation --------
       int B = 0;
       Map<Integer, Integer> opcode = new HashMap<Integer, Integer>();
-      for (int i = 1; i < assemblyMap.size(); i++) {
+      for (int i = 1; i < assemblyMap.size(); i++){
         String line[] = assemblyMap.get(String.valueOf(i));
         String addrMode = "";
         int objectCode = 0;
         int format = 0;
-        int DISP, TA, X = 0 ;
+        int DISP = 0;
+        int X = 0;
+        int TA = 0;
         int PC = LOCTAB.get(i+1);
         int[] nixbpe = new int[]{0,0,0,0,0,0};
         // Addressing Mode
@@ -277,11 +274,11 @@ public class Main{
               X = 1;
           }
         }
-        System.out.print(operand + ": ");
-        for(int j = 0; j < 6;j++){
-          System.out.print(nixbpe[j] + " ");
-        }
-        System.out.println();
+        //test printing nixpbe...
+        // System.out.print(operand + ": ");
+        // for(int j = 0; j < 6;j++){
+        //   System.out.print(nixbpe[j] + " ");
+        // }
         if(check.equals("BASE")){
           continue;
         }
@@ -292,7 +289,87 @@ public class Main{
           nixbpe[5] = 1;
           format = 4;
         }
+        String nixbpeString = "";
+        for(int j = 0; j < 6; j++){
+            nixbpeString += String.valueOf(nixbpe[j]);
+        }
+        switch(nixbpeString){
+          //start simple calc of displacement
+          case "110000":
+              DISP = TA;
+          case "110001":
+              if(SYMTAB.containsKey(operand.substring(1))){
+                DISP = SYMTAB.get(operand.substring(1));
+              }else{
 
+              }
+          case "110010":
+              DISP = TA - PC;
+          case "110100":
+              DISP = TA - B;
+          case "111000":
+              DISP = TA;
+          case "111001":
+              if(SYMTAB.containsKey(operand.substring(1))){
+                DISP = SYMTAB.get(operand.substring(1));
+              }else{
+
+              }
+          case "111010":
+              DISP = TA - PC;
+          case "1111100":
+              DISP = TA - B;
+          //start indrect
+          case "100000":
+              DISP = TA;
+          case "100001":
+                if(SYMTAB.containsKey(operand.substring(1))){
+                  DISP = SYMTAB.get(operand.substring(1));
+                }else{
+
+                }
+          case "100010":
+              DISP = TA - PC;
+          case "100100":
+              DISP = TA - B;
+          case "010000":
+              DISP = TA;
+          case "010001":
+              if(SYMTAB.containsKey(operand.substring(1))){
+                DISP = SYMTAB.get(operand.substring(1));
+              }else{
+
+              }
+          case "010010":
+              DISP = TA - PC;
+          case "010100":
+              DISP = TA - B;
+          default:
+              // System.out.println(String.format("%X",DISP));
+          if(format == 3){
+              String op = Integer.toBinaryString(OPTAB.get(check));
+              int length = op.length();
+              for(int k = 0; k < (8-length);k++){
+                  op = "0" + op;
+              }
+              op = op.substring(0, 6);
+              op  = op + nixbpeString;
+              //check if longer than 12 bits...
+              String disp = Integer.toBinaryString(DISP);
+              if(disp.length() > 12){
+                  disp = disp.substring(disp.length()-13, disp.length()-1);
+              }else{
+                  length = disp.length();
+                  for(int p = 0; p < (12-length);p++){
+                    disp = "0" + disp;
+                  }
+              }
+              op += disp;
+              objectCode = Integer.parseInt(op, 2);
+              System.out.println(String.format("%X",objectCode));
+          }
+
+        }
       }
 
       // For Testing
