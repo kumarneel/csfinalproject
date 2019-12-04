@@ -267,6 +267,7 @@ public class Main{
           nixbpe[0] = 1;
           nixbpe[1] = 1;
         }
+        // p < 2047 > b
         String[] delimit = operand.split(",");
         if (delimit.length > 1) {
           if (delimit[1].equals("X")){
@@ -346,6 +347,22 @@ public class Main{
               DISP = TA - B;
           default:
               // System.out.println(String.format("%X",DISP));
+          if(format == 1){
+
+            String temp = String.format("%X",OPTAB.get(check));
+            if(temp.length() == 1){
+              temp = "0" + temp;
+            }
+            System.out.println(temp);
+          }
+          if(format == 2){
+
+            String temp = String.format("%X",OPTAB.get(check));
+            if(temp.length() == 1){
+              temp = "0" + temp;
+            }
+            System.out.println(temp);
+          }
           if(format == 3){
               String op = Integer.toBinaryString(OPTAB.get(check));
               int length = op.length();
@@ -354,6 +371,7 @@ public class Main{
               }
               op = op.substring(0, 6);
               op  = op + nixbpeString;
+
               //check if longer than 12 bits...
               String disp = Integer.toBinaryString(DISP);
               if(disp.length() > 12){
@@ -366,9 +384,39 @@ public class Main{
               }
               op += disp;
               objectCode = Integer.parseInt(op, 2);
-              System.out.println(String.format("%X",objectCode));
+              String finalObjectCode = String.format("%X",objectCode);
+              length = finalObjectCode.length();
+              for(int k = 0; k < (6-length);k++){
+                  finalObjectCode = "0" + finalObjectCode;
+              }
+              System.out.println(finalObjectCode);
           }
+          if (format == 4){
+              String op = Integer.toBinaryString(OPTAB.get(check.substring(1, check.length())));
+              int length = op.length();
+              for(int k = 0; k < (8-length);k++){
+                  op = "0" + op;
+              }
+              op = op.substring(0, 6);
+              op  = op + nixbpeString;
+              if(!Character.isLetter(operand.charAt(0))){
+                  operand = operand.substring(1, operand.length());
+              }
+              int address = SYMTAB.get(operand);
+              String add = String.format("%X",address);
+              length = add.length();
+              for(int k = 0; k < (5-length);k++){
+                  add = "0" + add;
+              }
+              objectCode = Integer.parseInt(op, 2);
+              String finalObjectCode = String.format("%X",objectCode);
+              finalObjectCode += add;
+              for(int k = 0; k < (8-finalObjectCode.length());k++){
+                  finalObjectCode = "0" + finalObjectCode;
+              }
+              System.out.println(finalObjectCode);
 
+          }
         }
       }
 
