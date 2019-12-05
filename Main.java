@@ -330,11 +330,14 @@ public class Main{
             if (Character.isDigit(operand.charAt(0))){
                 nixbpeString = "110000";
             }else{
+              int Base = 0;
               int A = LOCTAB.get(i);
               if(operand.equals("s")){
+                  Base = 0;
+              }else{
+                Base = SYMTAB.get(operand);
 
               }
-              int Base = SYMTAB.get(operand);
               if(A > Base){
                 if(A - Base < 0x2047){
                     nixbpeString = "110010";
