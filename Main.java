@@ -216,7 +216,7 @@ public class Main{
           PROGLEN = LOCCTR - stAd;
       // --------  Start OpCode Calculation --------
       int B = 0;
-      Map<Integer, Integer> opcode = new HashMap<Integer, Integer>();
+      Map<Integer, String> opcode = new HashMap<Integer, String>();
       for (int i = 1; i < assemblyMap.size(); i++){
         String line[] = assemblyMap.get(String.valueOf(i));
         String addrMode = "";
@@ -227,6 +227,7 @@ public class Main{
         int TA = 0;
         int PC = LOCTAB.get(i+1);
         int[] nixbpe = new int[]{0,0,0,0,0,0};
+        String finalObjectCode = String.format("%X",objectCode);
         // Addressing Mode
         String operand = line[2];
         String check = line[1];
@@ -461,7 +462,6 @@ public class Main{
               }
               op += disp;
               objectCode = Integer.parseInt(op, 2);
-              String finalObjectCode = String.format("%X",objectCode);
               length = finalObjectCode.length();
               for(int k = 0; k < (6-length);k++){
                   finalObjectCode = "0" + finalObjectCode;
@@ -486,14 +486,13 @@ public class Main{
                   add = "0" + add;
               }
               objectCode = Integer.parseInt(op, 2);
-              String finalObjectCode = String.format("%X",objectCode);
               finalObjectCode += add;
               for(int k = 0; k < (8-finalObjectCode.length());k++){
                   finalObjectCode = "0" + finalObjectCode;
               }
               System.out.println(finalObjectCode);
           }
-
+          opcode.put(i,finalObjectCode);
       }
 
       // For Testing
@@ -530,14 +529,6 @@ public class Main{
       System.out.println(String.format("%X",PROGLEN));
       // End Header Record
 
-      // Begin Refer Record?
-      // Begin Define Record?
-
-      // ------- Begin Modficiation Record ----------
-
-      System.out.print("M^");
-
-
       // -------  Begin Text Record  ---------
       System.out.print("T^");
       // Starting Address
@@ -545,7 +536,17 @@ public class Main{
       for(int i = 0; i < (6-len);i++){
         System.out.print("0");
       }
-      System.out.print(String.format("%X",stAd) + "^");
+      int oplength = opcode.size() * 0x03;
+      System.out.print(String.format("^%X^",oplength));
+      for (int i = 0; i < oplength; i++) {
+        System.out.print(String.format("%S",opcode.get(i)));
+      }
+
+
+
+
+      // ------- Begin Modficiation Record ----------
+      System.out.print("M^");
 
     }
 
