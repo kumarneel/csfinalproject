@@ -267,14 +267,14 @@ public class Main{
                 int A = LOCTAB.get(i);
                 int Base = SYMTAB.get(operand);
                 if(A > Base){
-                  if(A - Base < 0x2047){
+                  if(A - Base < 0xFFF){
                       nixbpeString = "100010";
                   }else{
                       nixbpeString = "100100";
                   }
 
                 }else if(Base > A){
-                  if(Base - A < 0x2047){
+                  if(Base - A < 0xFFF){
                       nixbpeString = "100010";
                   }else{
                       nixbpeString = "100100";
@@ -290,14 +290,14 @@ public class Main{
                 int A = LOCTAB.get(i);
                 int Base = SYMTAB.get(operand);
                 if(A > Base){
-                  if(A - Base < 0x2047){
+                  if(A - Base < 0xFFF){
                       nixbpeString = "010010";
                   }else{
                       nixbpeString = "010100";
                   }
 
                 }else if(Base > A){
-                  if(Base - A < 0x2047){
+                  if(Base - A < 0xFFF){
                       nixbpeString = "010010";
                   }else{
                       nixbpeString = "010100";
@@ -312,14 +312,14 @@ public class Main{
               int A = LOCTAB.get(i);
               int Base = SYMTAB.get(split[0]);
               if(A > Base){
-                if(A - Base < 0x2047){
+                if(A - Base < 0xFFF){
                     nixbpeString = "111010";
                 }else{
                     nixbpeString = "111100";
                 }
 
               }else if(Base > A){
-                if(Base - A < 0x2047){
+                if(Base - A < 0xFFF){
                     nixbpeString = "111010";
                 }else{
                     nixbpeString = "111100";
@@ -339,14 +339,14 @@ public class Main{
 
               }
               if(A > Base){
-                if(A - Base < 0x2047){
+                if(A - Base < 0xFFF){
                     nixbpeString = "110010";
                 }else{
                     nixbpeString = "110100";
                 }
 
               }else if(Base > A){
-                if(Base - A < 0x2047){
+                if(Base - A < 0xFFF){
                     nixbpeString = "110010";
                 }else{
                     nixbpeString = "110100";
@@ -359,7 +359,6 @@ public class Main{
         if(check.equals("BASE")){
           continue;
         }
-        System.out.println("nix: " + nixbpeString);
 
         if(FMTAB.containsKey(check)){
           format = Integer.parseInt(FMTAB.get(check));
@@ -466,6 +465,7 @@ public class Main{
               for(int k = 0; k < (6-length);k++){
                   finalObjectCode = "0" + finalObjectCode;
               }
+              System.out.println("format 3 nixbpe: " + nixbpeString);
               System.out.println(finalObjectCode);
           }
           if (format == 4){
@@ -533,9 +533,7 @@ public class Main{
       // Begin Refer Record?
       // Begin Define Record?
 
-      // ------- Begin Modficiation Record ----------
 
-      System.out.print("M^");
 
 
       // -------  Begin Text Record  ---------
@@ -547,6 +545,16 @@ public class Main{
       }
       System.out.print(String.format("%X",stAd) + "^");
 
+      // ------- Begin Modficiation Record ----------
+      //If()
+      System.out.println("");
+      System.out.print("M");
+
+
+
+
     }
+
+
 
 }
