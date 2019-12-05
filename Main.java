@@ -214,14 +214,6 @@ public class Main{
           }
           //calculate program length
           PROGLEN = LOCCTR - stAd;
-          // for(String key: SYMTAB.keySet()){
-          //     System.out.println("LABEL: " + key + " location -> " + String.format("%X",SYMTAB.get(key)));
-          // }
-          // for(Integer index: LOCTAB.keySet()){
-          //   System.out.println("line index: " + index + " location -> " + String.format("%X",LOCTAB.get(index)));
-          // }
-
-
       // --------  Start OpCode Calculation --------
       int B = 0;
       Map<Integer, Integer> opcode = new HashMap<Integer, Integer>();
@@ -238,8 +230,12 @@ public class Main{
         // Addressing Mode
         String operand = line[2];
         String check = line[1];
+        String nixbpeString = "";
         if(SYMTAB.containsKey(operand)){
             TA = SYMTAB.get(operand);
+        }else if(operand.contains(",")){
+          String[] t = operand.split(",");
+          TA = SYMTAB.get(t[0]);
         }
         if((!SYMTAB.containsKey("BASE")) && check.equals("BASE")){
             SYMTAB.put("BASE",SYMTAB.get(operand));
@@ -248,115 +244,193 @@ public class Main{
         if(check.equals("BYTE") ||check.equals("WORD") || check.equals("RESB")||check.equals("RESW")){
             break;
         }
-        if (operand.charAt(0) == '@'){
-          nixbpe[0] = 1;
-          nixbpe[1] = 0;
-          nixbpe[2] = 0;
-        } else if (operand.charAt(0) == '#') {
-          String temp = operand.substring(1);
-          if(SYMTAB.containsKey(temp)){
-            TA = SYMTAB.get(temp);
+        if(check.charAt(0) ==  '+'){
+            format = 4;
+            if(operand.charAt(0) == '@'){
+                nixbpeString = "100001";
+            }
+            else if(operand.charAt(0) == '#'){
+                nixbpeString = "010001";
+            }
+            else if(operand.contains(",")){
+                nixbpeString = "111001";
+            }else{
+                nixbpeString = "110001";
+            }
+        }else{
+          if(operand.charAt(0) == '@'){
+              // String temp = operand.subsubstring(1, operand.length());
+              operand = operand.substring(1, operand.length());
+              if (Character.isDigit(operand.charAt(0))){
+                nixbpeString = "100000";
+              }else{
+                int A = LOCTAB.get(i);
+                int Base = SYMTAB.get(operand);
+                if(A > Base){
+                  if(A - Base < 0x2047){
+                      nixbpeString = "100010";
+                  }else{
+                      nixbpeString = "100100";
+                  }
+
+                }else if(Base > A){
+                  if(Base - A < 0x2047){
+                      nixbpeString = "100010";
+                  }else{
+                      nixbpeString = "100100";
+                  }
+                }
+              }
+          }else if(operand.charAt(0) == '#'){
+              // String temp = operand.subsubstring(1, operand.length());
+              operand = operand.substring(1, operand.length());
+              if (Character.isDigit(operand.charAt(0))){
+                nixbpeString = "010000";
+              }else{
+                int A = LOCTAB.get(i);
+                int Base = SYMTAB.get(operand);
+                if(A > Base){
+                  if(A - Base < 0x2047){
+                      nixbpeString = "010010";
+                  }else{
+                      nixbpeString = "010100";
+                  }
+
+                }else if(Base > A){
+                  if(Base - A < 0x2047){
+                      nixbpeString = "010010";
+                  }else{
+                      nixbpeString = "010100";
+                  }
+                }
+              }
+          }else if(operand.contains(",")){
+            if (Character.isDigit(operand.charAt(0))){
+                nixbpeString = "111000";
+            }else{
+              String[] split = operand.split(",");
+              int A = LOCTAB.get(i);
+              int Base = SYMTAB.get(split[0]);
+              if(A > Base){
+                if(A - Base < 0x2047){
+                    nixbpeString = "111010";
+                }else{
+                    nixbpeString = "111100";
+                }
+
+              }else if(Base > A){
+                if(Base - A < 0x2047){
+                    nixbpeString = "111010";
+                }else{
+                    nixbpeString = "111100";
+                }
+              }
+            }
           }else{
-            TA = Integer.parseInt(temp);
+            if (Character.isDigit(operand.charAt(0))){
+                nixbpeString = "110000";
+            }else{
+              int A = LOCTAB.get(i);
+              if(operand.equals("s")){
+
+              }
+              int Base = SYMTAB.get(operand);
+              if(A > Base){
+                if(A - Base < 0x2047){
+                    nixbpeString = "110010";
+                }else{
+                    nixbpeString = "110100";
+                }
+
+              }else if(Base > A){
+                if(Base - A < 0x2047){
+                    nixbpeString = "110010";
+                }else{
+                    nixbpeString = "110100";
+                }
+              }
+            }
           }
-          nixbpe[0] = 0;
-          nixbpe[1] = 1;
-          nixbpe[2] = 0;
         }
-        else {
-          nixbpe[0] = 1;
-          nixbpe[1] = 1;
-        }
-        // p < 2047 > b
-        String[] delimit = operand.split(",");
-        if (delimit.length > 1) {
-          if (delimit[1].equals("X")){
-            nixbpe[2] = 1;
-              X = 1;
-          }
-        }
-        //test printing nixpbe...
-        // System.out.print(operand + ": ");
-        // for(int j = 0; j < 6;j++){
-        //   System.out.print(nixbpe[j] + " ");
-        // }
+
         if(check.equals("BASE")){
           continue;
         }
+        System.out.println("nix: " + nixbpeString);
+
         if(FMTAB.containsKey(check)){
           format = Integer.parseInt(FMTAB.get(check));
         }
-        if (check.charAt(0) == '+') {
-          nixbpe[5] = 1;
-          format = 4;
-        }
-        String nixbpeString = "";
-        for(int j = 0; j < 6; j++){
-            nixbpeString += String.valueOf(nixbpe[j]);
-        }
-        switch(nixbpeString){
+
+        //switch(nixbpeString){
           //start simple calc of displacement
-          case "110000":
+          if  (nixbpeString.equals("110000")) {
               DISP = TA;
-          case "110001":
+          }
+          else if (nixbpeString.equals("110001")) {
               if(SYMTAB.containsKey(operand.substring(1))){
                 DISP = SYMTAB.get(operand.substring(1));
               }else{
 
               }
-          case "110010":
+          }
+          else if (nixbpeString.equals("110010")) {
               DISP = TA - PC;
-          case "110100":
+          }
+          else if (nixbpeString.equals("110100")) {
               DISP = TA - B;
-          case "111000":
+          }
+          else if (nixbpeString.equals("111000")) {
               DISP = TA;
-          case "111001":
+          }
+          else if (nixbpeString.equals("111001")) {
               if(SYMTAB.containsKey(operand.substring(1))){
                 DISP = SYMTAB.get(operand.substring(1));
               }else{
 
               }
-          case "111010":
+          }else if (nixbpeString.equals("111010")) {
               DISP = TA - PC;
-          case "1111100":
+          }
+          else if (nixbpeString.equals("111100")) {
               DISP = TA - B;
+          }
           //start indrect
-          case "100000":
+          else if (nixbpeString.equals("100000")) {
               DISP = TA;
-          case "100001":
+          }
+          else if(nixbpeString.equals("100001")){
                 if(SYMTAB.containsKey(operand.substring(1))){
                   DISP = SYMTAB.get(operand.substring(1));
                 }else{
 
                 }
-          case "100010":
+          }else if(nixbpeString.equals("100010")){
               DISP = TA - PC;
-          case "100100":
+          }else if(nixbpeString.equals("100100")){
               DISP = TA - B;
-          case "010000":
+          }else if(nixbpeString.equals("010000")){
               DISP = TA;
-          case "010001":
+          }else if(nixbpeString.equals("010001")){
               if(SYMTAB.containsKey(operand.substring(1))){
                 DISP = SYMTAB.get(operand.substring(1));
               }else{
 
               }
-          case "010010":
+          }else if(nixbpeString.equals("010010")){
               DISP = TA - PC;
-          case "010100":
+          }else if(nixbpeString.equals("010100")){
               DISP = TA - B;
-          default:
-              // System.out.println(String.format("%X",DISP));
+          }
           if(format == 1){
-
             String temp = String.format("%X",OPTAB.get(check));
             if(temp.length() == 1){
               temp = "0" + temp;
             }
             System.out.println(temp);
           }
+          //format
           if(format == 2){
-
             String temp = String.format("%X",OPTAB.get(check));
             if(temp.length() == 1){
               temp = "0" + temp;
@@ -371,7 +445,7 @@ public class Main{
               }
               op = op.substring(0, 6);
               op  = op + nixbpeString;
-
+              // System.out.println(op);
               //check if longer than 12 bits...
               String disp = Integer.toBinaryString(DISP);
               if(disp.length() > 12){
@@ -415,9 +489,8 @@ public class Main{
                   finalObjectCode = "0" + finalObjectCode;
               }
               System.out.println(finalObjectCode);
-
           }
-        }
+
       }
 
       // For Testing
@@ -429,7 +502,7 @@ public class Main{
       //PASS 2
       //if opcode = 'start' then
       String passOneStart[] = assemblyMap.get("0");
-      if (passOneStart[1].equals("START")){
+      if(passOneStart[1].equals("START")){
         //begin
       }else{
         return;
@@ -457,6 +530,11 @@ public class Main{
       // Begin Refer Record?
       // Begin Define Record?
 
+      // ------- Begin Modficiation Record ----------
+
+      System.out.print("M^");
+
+
       // -------  Begin Text Record  ---------
       System.out.print("T^");
       // Starting Address
@@ -465,53 +543,7 @@ public class Main{
         System.out.print("0");
       }
       System.out.print(String.format("%X",stAd) + "^");
-      // Object Code Length
-      // TBD
-      System.out.println(" ");
-
-      // Begin End Record
-
-
-          //write Header record to object program
-          //initialize first Text record
-          //while OPCODE != 'END' do
-              //begin
-                //if this is not a comment line then
-                  //begin search OPTAB for OPCODE
-                    //if found then
-                        //begin
-                        //if there is a symbol in OPERAND field then
-                          //begin
-                              //search SYMTAB for OPERAND
-                              //if found then...
-                                //store symbol value as operand address
-                                //else
-                                  //store 0 as operand address
-                                  //set error flag(undefined symbol)
-                                    //end
-                                    //end (if symbol)
-
-                                //else
-                                    //store 0 as operand address
-                                    //assmble the object code instruction
-                                  //end IF OPCODE FOUND
-                              //else if OPCODE = 'BYTE' or 'WORD' then
-                                //convert constant to object code
-                            //if object code will not fit into current Text record then
-                                //begin
-                                    //write Text record to object program
-                                    //initialize new Text record
-                                    //end
-                                //add object code to Text record
-                                    //end
-                                //end IF NOT COMMENT
-                                //write listing line
-                                //read next input line
-                            //end WHILE NOT END
-                              //write last Text record to object program
-                              //write End record to object program
-                              //write last listing Line
-                              //end PASS 2
 
     }
+
 }
