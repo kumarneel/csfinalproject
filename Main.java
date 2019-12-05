@@ -548,7 +548,7 @@ public class Main{
         System.out.print("0");
       }
       System.out.print(String.format("%X",stAd) + "^");
-
+      System.out.print(String.format("%X",opcode.size()*3) + "^");
       for(String op: opcode){
         System.out.print(op + "^");
       }
