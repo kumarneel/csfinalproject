@@ -216,7 +216,8 @@ public class Main{
           PROGLEN = LOCCTR - stAd;
       // --------  Start OpCode Calculation --------
       int B = 0;
-      Map<Integer, String> opcode = new HashMap<Integer, String>();
+
+      LinkedList<String> opcode = new LinkedList<String>();
       for (int i = 1; i < assemblyMap.size(); i++){
         String line[] = assemblyMap.get(String.valueOf(i));
         String addrMode = "";
@@ -227,7 +228,6 @@ public class Main{
         int TA = 0;
         int PC = LOCTAB.get(i+1);
         int[] nixbpe = new int[]{0,0,0,0,0,0};
-        String finalObjectCode = String.format("%X",objectCode);
         // Addressing Mode
         String operand = line[2];
         String check = line[1];
@@ -245,6 +245,7 @@ public class Main{
         if(check.equals("BYTE") ||check.equals("WORD") || check.equals("RESB")||check.equals("RESW")){
             break;
         }
+
         if(check.charAt(0) ==  '+'){
             format = 4;
             if(operand.charAt(0) == '@'){
@@ -318,7 +319,6 @@ public class Main{
                 }else{
                     nixbpeString = "111100";
                 }
-
               }else if(Base > A){
                 if(Base - A < 0xFFF){
                     nixbpeString = "111010";
@@ -425,6 +425,10 @@ public class Main{
           }else if(nixbpeString.equals("010100")){
               DISP = TA - B;
           }
+          if (check.equals("RSUB")){
+              nixbpeString = "110000";
+              DISP = 0;
+          }
           if(format == 1){
             String temp = String.format("%X",OPTAB.get(check));
             if(temp.length() == 1){
@@ -448,25 +452,25 @@ public class Main{
               }
               op = op.substring(0, 6);
               op  = op + nixbpeString;
-              // System.out.println(op);
               //check if longer than 12 bits...
               String disp = Integer.toBinaryString(DISP);
               if(disp.length() > 12){
-                  disp = disp.substring(disp.length()-13, disp.length()-1);
+                  disp = disp.substring(disp.length()-12, disp.length());
               }else{
                   length = disp.length();
                   for(int p = 0; p < (12-length);p++){
                     disp = "0" + disp;
                   }
               }
+
               op += disp;
               objectCode = Integer.parseInt(op, 2);
+              String finalObjectCode = String.format("%X",objectCode);
               length = finalObjectCode.length();
               for(int k = 0; k < (6-length);k++){
                   finalObjectCode = "0" + finalObjectCode;
               }
-              System.out.println("format 3 nixbpe: " + nixbpeString);
-              System.out.println(finalObjectCode);
+              opcode.add(finalObjectCode);
           }
           if (format == 4){
               String op = Integer.toBinaryString(OPTAB.get(check.substring(1, check.length())));
@@ -486,13 +490,14 @@ public class Main{
                   add = "0" + add;
               }
               objectCode = Integer.parseInt(op, 2);
+              String finalObjectCode = String.format("%X",objectCode);
               finalObjectCode += add;
               for(int k = 0; k < (8-finalObjectCode.length());k++){
                   finalObjectCode = "0" + finalObjectCode;
               }
-              System.out.println(finalObjectCode);
+              opcode.add(finalObjectCode);
           }
-          opcode.put(i,finalObjectCode);
+
       }
 
       // For Testing
@@ -529,6 +534,12 @@ public class Main{
       System.out.println(String.format("%X",PROGLEN));
       // End Header Record
 
+      // Begin Refer Record?
+      // Begin Define Record?
+
+
+
+
       // -------  Begin Text Record  ---------
       System.out.print("T^");
       // Starting Address
@@ -536,17 +547,21 @@ public class Main{
       for(int i = 0; i < (6-len);i++){
         System.out.print("0");
       }
-      int oplength = opcode.size() * 0x03;
-      System.out.print(String.format("^%X^",oplength));
-      for (int i = 0; i < oplength; i++) {
-        System.out.print(String.format("%S",opcode.get(i)));
+      System.out.print(String.format("%X",stAd) + "^");
+
+      for(String op: opcode){
+        System.out.print(op + "^");
       }
 
-
-
-
       // ------- Begin Modficiation Record ----------
-      System.out.print("M^");
+      //If()
+      //addresses are stored within LOCTABLE
+      //
+      System.out.println("");
+      System.out.print("M");
+
+
+
 
     }
 
