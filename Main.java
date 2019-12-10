@@ -13,7 +13,6 @@ public class Main extends Hashmaps{
     public static HashMap<String, String[]> assemblyMap = new LinkedHashMap<String, String[]>();
     
     // Global LinkedLists
-    public static LinkedList<String> plz = new LinkedList<String>();
     public static LinkedList<String> opcode = new LinkedList<String>();
     public static LinkedList<Integer> mrecSt = new LinkedList<Integer>();
     public static LinkedList<String> mrecCmd = new LinkedList<String>();
