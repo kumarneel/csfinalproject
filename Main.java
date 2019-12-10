@@ -1,6 +1,5 @@
 import java.util.*;
 import java.io.File;
-import java.util.Scanner;
 
 public class Main extends Hashmaps{
     public static HashMap<String, Integer> OPTAB = new HashMap<String,Integer>();
@@ -478,6 +477,7 @@ public class Main extends Hashmaps{
         }
         System.out.print(String.format("%X",stAd) + "^");
 
+
         len = String.format("%X",PROGLEN).length();
         for(int i = 0; i < (6-len);i++) {
           System.out.print("0");
@@ -499,21 +499,12 @@ public class Main extends Hashmaps{
           System.out.print(op);
           if(opcode.size() != ++i) {
             System.out.print("^");
+
           }
         }
 
-        // ------- Begin Modficiation Record ----------
-        //If()
-        //addresses are stored within LOCTABLE
-        //
-        System.out.println("");
-      //  System.out.print("M");
-        for(i = 0; i < plz.size(); i++){
-            System.out.print("M");
-          //  System.out.print(String.format("%X",opcode.size()*4) + "^");
-            System.out.println(plz.get(i));
+		// ------- Begin Modification Record ----------
 
-        }
 
 
         //---------- Begin End Record ------------
