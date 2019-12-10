@@ -216,7 +216,8 @@ public class Main{
           PROGLEN = LOCCTR - stAd;
       // --------  Start OpCode Calculation --------
       int B = 0;
-
+      LinkedList<Integer> mrecSt = new LinkedList<Integer>();
+      LinkedList<String> plz = new LinkedList<String>();
       LinkedList<String> opcode = new LinkedList<String>();
       for (int i = 1; i < assemblyMap.size(); i++){
         String line[] = assemblyMap.get(String.valueOf(i));
@@ -361,10 +362,28 @@ public class Main{
           continue;
         }
 
+
+      //LinkedList<Integer> mrec = new LinkedList<Integer>();
         if(FMTAB.containsKey(check)){
           format = Integer.parseInt(FMTAB.get(check));
-        }
+          System.out.println("------------------");
+          System.out.println(check);
+        }else{
+          System.out.println("+++++++++++++++++");
+          System.out.println(check);
+          System.out.println(LOCTAB.get(i));
+          mrecSt.add(LOCTAB.get(i));
+        int   mrecSz = LOCTAB.get(i+1)-LOCTAB.get(i);
+        System.out.println(mrecSz);
+        plz.add(check);
 
+
+
+      //    mrec.add(stAd).length();
+      //    System.out.println(mrec);
+
+
+        }
         //switch(nixbpeString){
           //start simple calc of displacement
           if  (nixbpeString.equals("110000")) {
@@ -558,7 +577,24 @@ public class Main{
       //addresses are stored within LOCTABLE
       //
       System.out.println("");
-      System.out.print("M");
+    //  System.out.print("M");
+      for(int i = 0; i < plz.size(); i++){
+          System.out.print("M");
+        //  System.out.print(String.format("%X",opcode.size()*4) + "^");
+          System.out.println(plz.get(i));
+
+      }
+
+
+      //---------- Begin End Record ------------
+
+      System.out.print("\n"+ "E^");
+      len = String.format("%X",stAd).length();
+      for(int i = 0; i < (6-len);i++){
+        System.out.print("0");
+      }
+      System.out.print(String.format("%X",stAd));
+
 
 
 
