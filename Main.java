@@ -8,7 +8,10 @@ public class Main extends Hashmaps{
     public static HashMap<Integer,Integer> LOCTAB = new LinkedHashMap<Integer,Integer>();
     public static HashMap<String, String[]> assemblyMap = new LinkedHashMap<String, String[]>();
 
-    public static LinkedList<String> plz = new LinkedList<String>();
+
+    public static LinkedList<Integer> mrecSt = new LinkedList<Integer>();
+    public static LinkedList<String> mrecCmd = new LinkedList<String>();
+    public static LinkedList<Integer> mrecAd = new LinkedList<Integer>();
     public static LinkedList<String> opcode = new LinkedList<String>();
 
     public static String PROGNAME;
@@ -116,6 +119,7 @@ public class Main extends Hashmaps{
       Scanner scan = new Scanner(System.in);
       String answ;
       String sym[] = new String[3];
+      int val;
 
       System.out.println("Would you like to define a new symbol? Y/N");
       answ = scan.nextLine();
@@ -125,8 +129,11 @@ public class Main extends Hashmaps{
         for(int i = 0; i<2; i++){
           sym[i] = scan.nextLine();
         }
-        FMTAB.put(sym[0],sym[2]);
+        val = Integer.parseInt(sym[2]);
+        OPTAB.put(sym[0],val);
 	    }
+
+
 
 		// CALCULATE PROGRAM LENGTH
 		PROGLEN = LOCCTR - stAd;
@@ -519,7 +526,7 @@ public class Main extends Hashmaps{
             }
             System.out.print(mrecAd.get(i)+"^");
             System.out.print("05^");
-            System.out.println(mrec.get(i));
+            System.out.println(mrecSt.get(i));
 
         }
 
