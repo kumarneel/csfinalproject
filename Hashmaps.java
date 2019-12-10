@@ -1,11 +1,9 @@
-package data;
-
 import java.util.*;
 
 public class Hashmaps {
-  public Hashmaps();
+  public Hashmaps() {}
 
-  public void init() {
+  public void optab(HashMap<String, Integer> OPTAB) {
     //OPTAB - HashMap of commands and their corresponding operation codes
     OPTAB.put("ADD",   0x18);//18
     OPTAB.put("ADDF",  0x58);//58
@@ -66,65 +64,67 @@ public class Hashmaps {
     OPTAB.put("TIX",   0x2C);//2C
     OPTAB.put("TIXR",  0xB8);//B8
     OPTAB.put("WD",    0xDC);//DC
-
-    FMTAB.put("ADD", "3");
-    FMTAB.put("ADDF", "3");
-    FMTAB.put("ADDR", "2");
-    FMTAB.put("AND", "3");
-    FMTAB.put("CLEAR", "2");
-    FMTAB.put("COMP", "3");
-    FMTAB.put("COMPF", "3");
-    FMTAB.put("COMPR", "2");
-    FMTAB.put("DIV",   "3");
-    FMTAB.put("DIVF",  "3");
-    FMTAB.put("DIVR",  "2");
-    FMTAB.put("FIX",   "1");
-    FMTAB.put("FLOAT", "1");
-    FMTAB.put("HIO",   "1");
-    FMTAB.put("J",     "3");
-    FMTAB.put("JEQ",   "3");
-    FMTAB.put("JGT",   "3");
-    FMTAB.put("JLT",   "3");
-    FMTAB.put("JSUB",  "3");
-    FMTAB.put("LDA",   "3");
-    FMTAB.put("LDB",   "3");
-    FMTAB.put("LDCH",  "3");
-    FMTAB.put("LDF",   "3");
-    FMTAB.put("LDL",   "3");
-    FMTAB.put("LDS",   "3");
-    FMTAB.put("LDT",   "3");
-    FMTAB.put("LDX",   "3");
-    FMTAB.put("LPS",   "3");
-    FMTAB.put("MUL",   "3");
-    FMTAB.put("MULF",  "3");
-    FMTAB.put("MULR",  "2");
-    FMTAB.put("NORM",  "1");
-    FMTAB.put("OR",    "3");
-    FMTAB.put("RD",    "3");
-    FMTAB.put("RMO",   "2");
-    FMTAB.put("RSUB",  "3");
-    FMTAB.put("SHIFTL","2");
-    FMTAB.put("SHIFTR","2");
-    FMTAB.put("SIO",   "1");
-    FMTAB.put("SSK",   "3");
-    FMTAB.put("STA",   "3");
-    FMTAB.put("STB",   "3");
-    FMTAB.put("STCH",  "3");
-    FMTAB.put("STF",   "3");
-    FMTAB.put("STI",   "3");
-    FMTAB.put("STL",   "3");
-    FMTAB.put("STS",   "3");
-    FMTAB.put("STSW",  "3");
-    FMTAB.put("STT",   "3");
-    FMTAB.put("STX",   "3");
-    FMTAB.put("SUB",   "3");
-    FMTAB.put("SUBF",  "3");
-    FMTAB.put("SUBR",  "2");
-    FMTAB.put("SVC",   "2");
-    FMTAB.put("TD",    "3");
-    FMTAB.put("TIO",   "1");
-    FMTAB.put("TIX",   "3");
-    FMTAB.put("TIXR",  "2");
-    FMTAB.put("WD",    "3");
+  }
+  
+  public void fmtab(HashMap<String, String> FMTAB) {
+	FMTAB.put("ADD", "3");
+	FMTAB.put("ADDF", "3");
+	FMTAB.put("ADDR", "2");
+	FMTAB.put("AND", "3");
+	FMTAB.put("CLEAR", "2");
+	FMTAB.put("COMP", "3");
+	FMTAB.put("COMPF", "3");
+	FMTAB.put("COMPR", "2");
+	FMTAB.put("DIV",   "3");
+	FMTAB.put("DIVF",  "3");
+	FMTAB.put("DIVR",  "2");
+	FMTAB.put("FIX",   "1");
+	FMTAB.put("FLOAT", "1");
+	FMTAB.put("HIO",   "1");
+	FMTAB.put("J",     "3");
+	FMTAB.put("JEQ",   "3");
+	FMTAB.put("JGT",   "3");
+	FMTAB.put("JLT",   "3");
+	FMTAB.put("JSUB",  "3");
+	FMTAB.put("LDA",   "3");
+	FMTAB.put("LDB",   "3");
+	FMTAB.put("LDCH",  "3");
+	FMTAB.put("LDF",   "3");
+	FMTAB.put("LDL",   "3");
+	FMTAB.put("LDS",   "3");
+	FMTAB.put("LDT",   "3");
+	FMTAB.put("LDX",   "3");
+	FMTAB.put("LPS",   "3");
+	FMTAB.put("MUL",   "3");
+	FMTAB.put("MULF",  "3");
+	FMTAB.put("MULR",  "2");
+	FMTAB.put("NORM",  "1");
+	FMTAB.put("OR",    "3");
+	FMTAB.put("RD",    "3");
+	FMTAB.put("RMO",   "2");
+	FMTAB.put("RSUB",  "3");
+	FMTAB.put("SHIFTL","2");
+	FMTAB.put("SHIFTR","2");
+	FMTAB.put("SIO",   "1");
+	FMTAB.put("SSK",   "3");
+	FMTAB.put("STA",   "3");
+	FMTAB.put("STB",   "3");
+	FMTAB.put("STCH",  "3");
+	FMTAB.put("STF",   "3");
+	FMTAB.put("STI",   "3");
+	FMTAB.put("STL",   "3");
+	FMTAB.put("STS",   "3");
+	FMTAB.put("STSW",  "3");
+	FMTAB.put("STT",   "3");
+	FMTAB.put("STX",   "3");
+	FMTAB.put("SUB",   "3");
+	FMTAB.put("SUBF",  "3");
+	FMTAB.put("SUBR",  "2");
+	FMTAB.put("SVC",   "2");
+	FMTAB.put("TD",    "3");
+	FMTAB.put("TIO",   "1");
+	FMTAB.put("TIX",   "3");
+	FMTAB.put("TIXR",  "2");
+	FMTAB.put("WD",    "3");
   }
 }
