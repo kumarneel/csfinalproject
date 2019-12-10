@@ -5,6 +5,9 @@ public class Main extends Hashmaps{
 	// Global HashMaps
     public static HashMap<String, Integer> OPTAB = new HashMap<String,Integer>();
     public static HashMap<String, String> FMTAB = new HashMap<String, String>();
+    public static HashMap<String, Integer> EQU = new HashMap<String, Integer>();
+    
+    // Global LinkedHashMaps
     public static HashMap<String, Integer> SYMTAB  = new LinkedHashMap<String,Integer>();
     public static HashMap<Integer,Integer> LOCTAB = new LinkedHashMap<Integer,Integer>();
     public static HashMap<String, String[]> assemblyMap = new LinkedHashMap<String, String[]>();
@@ -12,19 +15,22 @@ public class Main extends Hashmaps{
     // Global LinkedLists
     public static LinkedList<String> plz = new LinkedList<String>();
     public static LinkedList<String> opcode = new LinkedList<String>();
+    public static LinkedList<Integer> mrecSt = new LinkedList<Integer>();
+    public static LinkedList<String> mrecCmd = new LinkedList<String>();
+    public static LinkedList<Integer> mrecAd = new LinkedList<Integer>();
     
     // Global Variables
-    public static String PROGNAME;
-    public static int PROGLEN;
+    public static String PROGNAME = "";
+    public static int PROGLEN = 0;
     public static int LOCCTR = 0;
     public static int stAd = 0;
-    
+
     public static void init() {
     	Hashmaps init = new Hashmaps();
     	init.fmtab(FMTAB);
     	init.optab(OPTAB);
     }
-    
+
     public static void readFile() {
         //open and read input file and store into map...
     	Scanner userInput = new Scanner(System.in);
@@ -46,96 +52,105 @@ public class Main extends Hashmaps{
         catch(Exception e) {
         	System.out.println("Sorry, file not found.");
         	System.out.println("Exiting...");
-        	System.exit(0);
+        	System.exit(1);
         }
     }
-    
+
     public static void passOne() {
-    	// INIT GLOBAL VARIABLES
-		PROGNAME = "";
-	    LOCCTR = 0;
-	    stAd = 0;
-	    PROGLEN = 0;
-	
-	    //if opcode = 'start' then...
 	    String firstLine[] = assemblyMap.get("0");
+	    // If "START" then...
 	    if (firstLine[1].equals("START")){
 	      PROGNAME = firstLine[0];
-	      //save #[OPERAND] as starting address
+	      // Save #[OPERAND] as starting address
 	      stAd = Integer.parseInt(String.valueOf(firstLine[2]),16);
-	      //initialize LOCCTR to starting address
+	      // Initialize LOCCTR to starting address
 	      LOCCTR = stAd;
 	    }
 	    else{
-	      //initialize LOCCTR to 0
+	      // Initialize LOCCTR to 0
 	      LOCCTR = 0x00;
 	    }
-	    
-	    for(int i = 1; i < assemblyMap.size();i++){
+
+	    for(int i = 1; i < assemblyMap.size(); i++) {
 	    	// Local Variables
 		    String currentLine[] = assemblyMap.get(String.valueOf(i));
 		    String label = currentLine[0];
 		    String check = currentLine[1];
 		    String operand = currentLine[2];
-		    
+
 		    LOCTAB.put(i,LOCCTR);
-		    
+
 		    // END OF FILE
 		    if(check.equals("END")){
 		    	break;
 		    }
+
+		    // Assembler Directive EQU
+		    if(check.equals("EQU")) {
+		    	EQU.put(label,Integer.parseInt(operand));
+		    	continue;
+		    }
+		    
 		    //check if there is a symbol in the label field
 		    if (!label.equals(" ")) {
 		        //check if the label already exists in the SYMTAB
-		        if ((SYMTAB.containsKey(label))){
+		        if ((SYMTAB.containsKey(label))) {
 		          System.out.print("DUPLICATE SYMBOL");
 		          return;
-		        }else{
+		        } else {
 		            //insert into SYMTAB
 		            SYMTAB.put(label,LOCCTR);
 		        }
 		    }
 		    //add to LOCCTR
-		    if(check.charAt(0) == '+'){
+		    if(check.charAt(0) == '+') {
 		      LOCCTR += 0x04;
-		    }else if(OPTAB.containsKey(check)){
+		    } else if(OPTAB.containsKey(check)) {
 		      LOCCTR += 0x03;
-		    }else if(check.equals("WORD")){
+		    } else if(check.equals("WORD")) {
 		      LOCCTR += 0x03;
-		    }else if(check.equals("RESW")){
+		    } else if(check.equals("RESW")) {
 		      LOCCTR += 0x03 * Integer.parseInt(operand);
-		    }else if(check.equals("RESB")){
+		    } else if(check.equals("RESB")) {
 		      LOCCTR += Integer.parseInt(operand);
-		    }else if(check.equals("BYTE")){
+		    } else if(check.equals("BYTE")) {
 		        LOCCTR += operand.length()-2;
-		    } else if(check.equals("BASE")){
-		        //comment line do nothing...
+		    } else if(check.equals("BASE")) {
+		        // Do Nothing
 		    } else {
 		        System.out.println("INVALID OPERATION CODE");
-		            return;
-		        }
+		        return;
+		    }
 	    }
-	    
-		// CALCULATE PROGRAM LENGTH
-		PROGLEN = LOCCTR - stAd;
-      
-		// -------- START OPCODE CALCULATION --------
-		int B = 0;
-		LinkedList<Integer> mrecSt = new LinkedList<Integer>();
 
+		// Calculate Program Length
+		PROGLEN = LOCCTR - stAd;
+
+		// -------- START OPCODE CALCULATION --------
 		for (int i = 1; i < assemblyMap.size(); i++) {
 			// Local Variables
 			String line[] = assemblyMap.get(String.valueOf(i));
+			String operand = line[2];
+			String check = line[1];
+			String nixbpeString = "";
 			int objectCode = 0;
 			int format = 0;
 			int DISP = 0;
 			int TA = 0;
 			int PC = LOCTAB.get(i+1);
+			int B = 0;
 			
-			String operand = line[2];
-			String check = line[1];
-			String nixbpeString = "";
+			// Skip calculation of EQU line
+			if (check.equals("EQU")) {
+				continue;
+			}
 			
+			// Re-Value operand from EQU
+			String equCheck = operand.substring(1);
+			if(EQU.containsKey(equCheck)) {
+				operand = "#" + EQU.get(equCheck);
+			}
+
 			if(SYMTAB.containsKey(operand)) {
 				TA = SYMTAB.get(operand);
 			}
@@ -143,16 +158,16 @@ public class Main extends Hashmaps{
 				String[] t = operand.split(",");
 				TA = SYMTAB.get(t[0]);
 			}
-			
+
 			if((!SYMTAB.containsKey("BASE")) && check.equals("BASE")) {
 				SYMTAB.put("BASE",SYMTAB.get(operand));
 				B = SYMTAB.get(operand);
 			}
-			
-			if(check.equals("BYTE") ||check.equals("WORD") || check.equals("RESB")||check.equals("RESW")) {
+
+			if(check.equals("BYTE") ||check.equals("WORD") || check.equals("RESB") || check.equals("RESW")) {
 				break;
 			}
-			
+
 			if(check.charAt(0) =='+') {
 				format = 4;
 				if(operand.charAt(0) == '@') {
@@ -229,7 +244,7 @@ public class Main extends Hashmaps{
 						String[] split = operand.split(",");
 						int A = LOCTAB.get(i);
 						int Base = SYMTAB.get(split[0]);
-						
+
 						if(A > Base){
 							if(A - Base < 0xFFF) {
 								nixbpeString = "111010";
@@ -255,7 +270,7 @@ public class Main extends Hashmaps{
 					else {
 						int Base = 0;
 						int A = LOCTAB.get(i);
-						
+
 						if(operand.equals("s")) {
 							Base = 0;
 						}
@@ -281,30 +296,22 @@ public class Main extends Hashmaps{
 					}
 				}
 			}
-			
+
 			if(check.equals("BASE")) {
 				continue;
 			}
-			
-			//LinkedList<Integer> mrec = new LinkedList<Integer>();
+
+			// Check for format 4 operations
 			if(FMTAB.containsKey(check)) {
-				format = Integer.parseInt(FMTAB.get(check));
-				System.out.println("------------------");
-				System.out.println(check);
+			  format = Integer.parseInt(FMTAB.get(check));
 			}
 			else {
-				System.out.println("+++++++++++++++++");
-				System.out.println(check);
-				System.out.println(LOCTAB.get(i));
-				mrecSt.add(LOCTAB.get(i));
-				int mrecSz = LOCTAB.get(i+1)-LOCTAB.get(i);
-				System.out.println(mrecSz);
-				plz.add(check);
-				//mrec.add(stAd).length();
-				//System.out.println(mrec);
+			  mrecSt.add(LOCTAB.get(i));
+			  mrecCmd.add(check);
+			  mrecAd.add(LOCTAB.get(i));
 			}
 			
-			//start simple calculation of displacement
+			// Start simple calculation of displacement
 			if(nixbpeString.equals("110000")) {
 				DISP = TA;
 			}
@@ -377,7 +384,7 @@ public class Main extends Hashmaps{
 				nixbpeString = "110000";
 				DISP = 0;
 			}
-			
+
 			// FORMAT 1 ADDRESSING
 			if(format == 1) {
 				String temp = String.format("%X",OPTAB.get(check));
@@ -395,7 +402,7 @@ public class Main extends Hashmaps{
 				}
 				System.out.println(temp);
 			}
-			
+
 			// FORMAT 3 ADDRESSING
 			if(format == 3){
 				String op = Integer.toBinaryString(OPTAB.get(check));
@@ -403,7 +410,7 @@ public class Main extends Hashmaps{
 				for(int k = 0; k < (8-length);k++) {
 					op = "0" + op;
 				}
-				
+
 				op = op.substring(0, 6);
 				op= op + nixbpeString;
 				//check if longer than 12 bits...
@@ -426,7 +433,7 @@ public class Main extends Hashmaps{
 				}
 				opcode.add(finalObjectCode);
 			}
-			
+
 			// FORMAT 4 ADDRESSING
 			if (format == 4) {
 				String op = Integer.toBinaryString(OPTAB.get(check.substring(1, check.length())));
@@ -453,88 +460,122 @@ public class Main extends Hashmaps{
 				}
 				opcode.add(finalObjectCode);
 			}
-			
+
 		}
 		// --------End Opcode Calculation --------
     }
-    
+
     public static void passTwo() {
-        //if opcode = 'start' then
         String passOneStart[] = assemblyMap.get("0");
+        // If "START" then...
         if(passOneStart[1].equals("START")) {
           // Do Nothing
         }
         else {
           return;
         }
+        
+        System.out.println();
+        System.out.println("Alternate Object Module Format:");
 
         // ------  Begin Header Record  -------
         System.out.print("H^" + PROGNAME);
+        // Must be 6 characters in length
         for(int i = 0; i < 6-PROGNAME.length();i++) {
           System.out.print(" ");
         }
-        int len = String.format("%X",stAd).length();
+        
         System.out.print("^");
-        for(int i = 0; i < (6-len);i++) {
+        
+        // Provide leading zeros for starting address
+        int len = String.format("%X",stAd).length();
+        for(int i = 0; i < (6-len); i++) {
           System.out.print("0");
         }
         System.out.print(String.format("%X",stAd) + "^");
-
-
+        
+        // Provide leading zeros for end address
         len = String.format("%X",PROGLEN).length();
-        for(int i = 0; i < (6-len);i++) {
+        for(int i = 0; i < (6 - len); i++) {
           System.out.print("0");
         }
         System.out.println(String.format("%X",PROGLEN));
-        // End Header Record
+        // ------ End Header Record ------
 
         // -------  Begin Text Record  ---------
         System.out.print("T^");
-        // Starting Address
+        // Provide leading zeros for starting address
         len = String.format("%X",stAd).length();
-        for(int i = 0; i < (6-len);i++) {
+        for(int i = 0; i < (6-len); i++) {
           System.out.print("0");
         }
         System.out.print(String.format("%X",stAd) + "^");
+        
+        // Total size of opcode
         System.out.print(String.format("%X",opcode.size()*3) + "^");
+        
+        // Print all calculated opcode values
         int i = 0;
         for(String op: opcode) {
           System.out.print(op);
           if(opcode.size() != ++i) {
             System.out.print("^");
-
           }
         }
+        System.out.println("");
+        // -------  End Text Record  ---------
 
-		// ------- Begin Modification Record ----------
-
-
+        // ------- Begin Modification Record ----------
+        for(int k = 0; k < mrecCmd.size(); k++) {
+            System.out.print("M");
+            len = String.format("%X",mrecAd.get(k)).length();
+            for(int j = 0; j < (6-len);j++){
+              System.out.print("0");
+            }
+            System.out.print(mrecAd.get(k)+"^");
+            System.out.print("05^");
+            System.out.println(mrecCmd.get(k));
+        }
+        // ------- End Modification Record ----------
 
         //---------- Begin End Record ------------
-        System.out.print("\n"+ "E^");
+        System.out.print("E^");
+        
+        // Starting address with leading zeros
         len = String.format("%X",stAd).length();
         for(i = 0; i < (6-len);i++){
           System.out.print("0");
         }
-        System.out.print(String.format("%X",stAd));
+        System.out.println(String.format("%X",stAd));
+        //---------- End End Record ------------
     }
 
     public static void main(String[] args){
     	init();
     	readFile();
-    	
+
     	try {
     		passOne();
     	}
     	catch (Exception e) {
     		System.out.println("Pass one failed.");
+    		System.out.println("Error: " + e);
+    		System.out.println("Exiting...");
+    		System.exit(1);
     	}
-    	
+
     	try {
         	passTwo();
     	}
     	catch (Exception e) {
     		System.out.println("Pass two failed.");
+    		System.out.println("Error: " + e);
+    		System.out.println("Exiting...");
+    		System.exit(1);
     	}
+    	
+    	System.out.println();
+    	System.out.println("Operation complete. Exiting...");
+    	System.exit(0);
     }
 }
