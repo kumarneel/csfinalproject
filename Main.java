@@ -2,15 +2,18 @@ import java.util.*;
 import java.io.File;
 
 public class Main extends Hashmaps{
+	// Global HashMaps
     public static HashMap<String, Integer> OPTAB = new HashMap<String,Integer>();
     public static HashMap<String, String> FMTAB = new HashMap<String, String>();
     public static HashMap<String, Integer> SYMTAB  = new LinkedHashMap<String,Integer>();
     public static HashMap<Integer,Integer> LOCTAB = new LinkedHashMap<Integer,Integer>();
     public static HashMap<String, String[]> assemblyMap = new LinkedHashMap<String, String[]>();
     
+    // Global LinkedLists
     public static LinkedList<String> plz = new LinkedList<String>();
     public static LinkedList<String> opcode = new LinkedList<String>();
     
+    // Global Variables
     public static String PROGNAME;
     public static int PROGLEN;
     public static int LOCCTR = 0;
