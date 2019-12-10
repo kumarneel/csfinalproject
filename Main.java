@@ -7,21 +7,21 @@ public class Main extends Hashmaps{
     public static HashMap<String, Integer> SYMTAB  = new LinkedHashMap<String,Integer>();
     public static HashMap<Integer,Integer> LOCTAB = new LinkedHashMap<Integer,Integer>();
     public static HashMap<String, String[]> assemblyMap = new LinkedHashMap<String, String[]>();
-    
+
     public static LinkedList<String> plz = new LinkedList<String>();
     public static LinkedList<String> opcode = new LinkedList<String>();
-    
+
     public static String PROGNAME;
     public static int PROGLEN;
     public static int LOCCTR = 0;
     public static int stAd = 0;
-    
+
     public static void init() {
     	Hashmaps init = new Hashmaps();
     	init.fmtab(FMTAB);
     	init.optab(OPTAB);
     }
-    
+
     public static void readFile() {
         //open and read input file and store into map...
     	Scanner userInput = new Scanner(System.in);
@@ -46,14 +46,14 @@ public class Main extends Hashmaps{
         	System.exit(0);
         }
     }
-    
+
     public static void passOne() {
     	// INIT GLOBAL VARIABLES
 		PROGNAME = "";
 	    LOCCTR = 0;
 	    stAd = 0;
 	    PROGLEN = 0;
-	
+
 	    //if opcode = 'start' then...
 	    String firstLine[] = assemblyMap.get("0");
 	    if (firstLine[1].equals("START")){
@@ -67,16 +67,16 @@ public class Main extends Hashmaps{
 	      //initialize LOCCTR to 0
 	      LOCCTR = 0x00;
 	    }
-	    
+
 	    for(int i = 1; i < assemblyMap.size();i++){
 	    	// Local Variables
 		    String currentLine[] = assemblyMap.get(String.valueOf(i));
 		    String label = currentLine[0];
 		    String check = currentLine[1];
 		    String operand = currentLine[2];
-		    
+
 		    LOCTAB.put(i,LOCCTR);
-		    
+
 		    // END OF FILE
 		    if(check.equals("END")){
 		    	break;
@@ -112,14 +112,30 @@ public class Main extends Hashmaps{
 		            return;
 		        }
 	    }
-	    
+
+      Scanner scan = new Scanner(System.in);
+      String answ;
+      String sym[] = new String[3];
+
+      System.out.println("Would you like to define a new symbol? Y/N");
+      answ = scan.nextLine();
+      if(answ == "Y" || answ == "y"){
+        System.out.println("Define new symbol");
+        System.out.println("Format: SYMBOL + EQU + FLAGS ");
+        for(int i = 0; i<2; i++){
+          sym[i] = scan.nextLine();
+        }
+        FMTAB.put(sym[0],sym[2]);
+	    }
+
 		// CALCULATE PROGRAM LENGTH
 		PROGLEN = LOCCTR - stAd;
-      
+
 		// -------- START OPCODE CALCULATION --------
 		int B = 0;
-		LinkedList<Integer> mrecSt = new LinkedList<Integer>();
-
+    LinkedList<Integer> mrecSt = new LinkedList<Integer>();
+    LinkedList<String> mrecCmd = new LinkedList<String>();
+    LinkedList<Integer> mrecAd = new LinkedList<Integer>();
 		for (int i = 1; i < assemblyMap.size(); i++) {
 			// Local Variables
 			String line[] = assemblyMap.get(String.valueOf(i));
@@ -128,11 +144,11 @@ public class Main extends Hashmaps{
 			int DISP = 0;
 			int TA = 0;
 			int PC = LOCTAB.get(i+1);
-			
+
 			String operand = line[2];
 			String check = line[1];
 			String nixbpeString = "";
-			
+
 			if(SYMTAB.containsKey(operand)) {
 				TA = SYMTAB.get(operand);
 			}
@@ -140,16 +156,16 @@ public class Main extends Hashmaps{
 				String[] t = operand.split(",");
 				TA = SYMTAB.get(t[0]);
 			}
-			
+
 			if((!SYMTAB.containsKey("BASE")) && check.equals("BASE")) {
 				SYMTAB.put("BASE",SYMTAB.get(operand));
 				B = SYMTAB.get(operand);
 			}
-			
+
 			if(check.equals("BYTE") ||check.equals("WORD") || check.equals("RESB")||check.equals("RESW")) {
 				break;
 			}
-			
+
 			if(check.charAt(0) =='+') {
 				format = 4;
 				if(operand.charAt(0) == '@') {
@@ -226,7 +242,7 @@ public class Main extends Hashmaps{
 						String[] split = operand.split(",");
 						int A = LOCTAB.get(i);
 						int Base = SYMTAB.get(split[0]);
-						
+
 						if(A > Base){
 							if(A - Base < 0xFFF) {
 								nixbpeString = "111010";
@@ -252,7 +268,7 @@ public class Main extends Hashmaps{
 					else {
 						int Base = 0;
 						int A = LOCTAB.get(i);
-						
+
 						if(operand.equals("s")) {
 							Base = 0;
 						}
@@ -278,29 +294,19 @@ public class Main extends Hashmaps{
 					}
 				}
 			}
-			
+
 			if(check.equals("BASE")) {
 				continue;
 			}
-			
-			//LinkedList<Integer> mrec = new LinkedList<Integer>();
-			if(FMTAB.containsKey(check)) {
-				format = Integer.parseInt(FMTAB.get(check));
-				System.out.println("------------------");
-				System.out.println(check);
-			}
-			else {
-				System.out.println("+++++++++++++++++");
-				System.out.println(check);
-				System.out.println(LOCTAB.get(i));
-				mrecSt.add(LOCTAB.get(i));
-				int mrecSz = LOCTAB.get(i+1)-LOCTAB.get(i);
-				System.out.println(mrecSz);
-				plz.add(check);
-				//mrec.add(stAd).length();
-				//System.out.println(mrec);
-			}
-			
+
+
+      if(FMTAB.containsKey(check)){
+        format = Integer.parseInt(FMTAB.get(check));
+      }else{
+        mrecSt.add(LOCTAB.get(i));
+        mrecCmd.add(check);
+        mrecAd.add(LOCTAB.get(i));
+      }
 			//start simple calculation of displacement
 			if(nixbpeString.equals("110000")) {
 				DISP = TA;
@@ -374,7 +380,7 @@ public class Main extends Hashmaps{
 				nixbpeString = "110000";
 				DISP = 0;
 			}
-			
+
 			// FORMAT 1 ADDRESSING
 			if(format == 1) {
 				String temp = String.format("%X",OPTAB.get(check));
@@ -392,7 +398,7 @@ public class Main extends Hashmaps{
 				}
 				System.out.println(temp);
 			}
-			
+
 			// FORMAT 3 ADDRESSING
 			if(format == 3){
 				String op = Integer.toBinaryString(OPTAB.get(check));
@@ -400,7 +406,7 @@ public class Main extends Hashmaps{
 				for(int k = 0; k < (8-length);k++) {
 					op = "0" + op;
 				}
-				
+
 				op = op.substring(0, 6);
 				op= op + nixbpeString;
 				//check if longer than 12 bits...
@@ -423,7 +429,7 @@ public class Main extends Hashmaps{
 				}
 				opcode.add(finalObjectCode);
 			}
-			
+
 			// FORMAT 4 ADDRESSING
 			if (format == 4) {
 				String op = Integer.toBinaryString(OPTAB.get(check.substring(1, check.length())));
@@ -450,11 +456,11 @@ public class Main extends Hashmaps{
 				}
 				opcode.add(finalObjectCode);
 			}
-			
+
 		}
 		// --------End Opcode Calculation --------
     }
-    
+
     public static void passTwo() {
         //if opcode = 'start' then
         String passOneStart[] = assemblyMap.get("0");
@@ -503,9 +509,19 @@ public class Main extends Hashmaps{
           }
         }
 
-		// ------- Begin Modification Record ----------
+        // ------- Begin Modficiation Record ----------
+        System.out.println("");
+        for(int k = 0; k < mrecCmd.size(); k++){
+            System.out.print("M");
+            len = String.format("%X",mrecAd.get(k)).length();
+            for(int j = 0; j < (6-len);j++){
+              System.out.print("0");
+            }
+            System.out.print(mrecAd.get(i)+"^");
+            System.out.print("05^");
+            System.out.println(mrec.get(i));
 
-
+        }
 
         //---------- Begin End Record ------------
         System.out.print("\n"+ "E^");
@@ -519,14 +535,14 @@ public class Main extends Hashmaps{
     public static void main(String[] args){
     	init();
     	readFile();
-    	
+
     	try {
     		passOne();
     	}
     	catch (Exception e) {
     		System.out.println("Pass one failed.");
     	}
-    	
+
     	try {
         	passTwo();
     	}
