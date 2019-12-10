@@ -151,8 +151,6 @@ public class Main{
         String firstLine[] = assemblyMap.get("0");
         if (firstLine[1].equals("START")){
           PROGNAME = firstLine[0];
-          //save #[OPERAND] as starting address
-          // String temp = firstLine[2];
           stAd = Integer.parseInt(String.valueOf(firstLine[2]),16);
           //initialize LOCCTR to starting address
           LOCCTR = stAd;
@@ -217,7 +215,8 @@ public class Main{
       // --------  Start OpCode Calculation --------
       int B = 0;
       LinkedList<Integer> mrecSt = new LinkedList<Integer>();
-      LinkedList<String> plz = new LinkedList<String>();
+      LinkedList<String> mcrecCmd = new LinkedList<String>();
+      LinkedList<Integer> mrecAd = new LinkedList<Integer>();
       LinkedList<String> opcode = new LinkedList<String>();
       for (int i = 1; i < assemblyMap.size(); i++){
         String line[] = assemblyMap.get(String.valueOf(i));
@@ -363,28 +362,20 @@ public class Main{
         }
 
 
-      //LinkedList<Integer> mrec = new LinkedList<Integer>();
+
         if(FMTAB.containsKey(check)){
           format = Integer.parseInt(FMTAB.get(check));
-          System.out.println("------------------");
-          System.out.println(check);
         }else{
-          System.out.println("+++++++++++++++++");
-          System.out.println(check);
-          System.out.println(LOCTAB.get(i));
           mrecSt.add(LOCTAB.get(i));
-        int   mrecSz = LOCTAB.get(i+1)-LOCTAB.get(i);
-        System.out.println(mrecSz);
-        plz.add(check);
+
+        mcrecCmd.add(check);
+        mrecAd.add(LOCTAB.get(i));
 
 
-
-      //    mrec.add(stAd).length();
-      //    System.out.println(mrec);
 
 
         }
-        //switch(nixbpeString){
+
           //start simple calc of displacement
           if  (nixbpeString.equals("110000")) {
               DISP = TA;
@@ -519,17 +510,10 @@ public class Main{
 
       }
 
-      // For Testing
 
-      // System.out.println();
-
-      // --------  End Opcode Calc --------
-
-      //PASS 2
-      //if opcode = 'start' then
       String passOneStart[] = assemblyMap.get("0");
       if(passOneStart[1].equals("START")){
-        //begin
+
       }else{
         return;
       }
@@ -553,9 +537,6 @@ public class Main{
       System.out.println(String.format("%X",PROGLEN));
       // End Header Record
 
-      // Begin Refer Record?
-      // Begin Define Record?
-
 
 
 
@@ -573,15 +554,16 @@ public class Main{
       }
 
       // ------- Begin Modficiation Record ----------
-      //If()
-      //addresses are stored within LOCTABLE
-      //
       System.out.println("");
-    //  System.out.print("M");
-      for(int i = 0; i < plz.size(); i++){
+      for(int i = 0; i < mcrecCmd.size(); i++){
           System.out.print("M");
-        //  System.out.print(String.format("%X",opcode.size()*4) + "^");
-          System.out.println(plz.get(i));
+          len = String.format("%X",mrecAd.get(i)).length();
+          for(int j = 0; j < (6-len);j++){
+            System.out.print("0");
+          }
+          System.out.print(mrecAd.get(i)+"^");
+          System.out.print("05^");
+          System.out.println(mcrecCmd.get(i));
 
       }
 
