@@ -89,7 +89,7 @@ public class Main extends Hashmaps{
 		    	EQU.put(label,Integer.parseInt(operand));
 		    	continue;
 		    }
-		    
+		    //PASS 1
 		    //check if there is a symbol in the label field
 		    if (!label.equals(" ")) {
 		        //check if the label already exists in the SYMTAB
@@ -124,7 +124,7 @@ public class Main extends Hashmaps{
 
 		// Calculate Program Length
 		PROGLEN = LOCCTR - stAd;
-
+		//PASS 2
 		// -------- START OPCODE CALCULATION --------
 		for (int i = 1; i < assemblyMap.size(); i++) {
 			// Local Variables
@@ -143,11 +143,19 @@ public class Main extends Hashmaps{
 			if (check.equals("EQU")) {
 				continue;
 			}
-			
+			if(FMTAB.containsKey(check)) {
+				  format = Integer.parseInt(FMTAB.get(check));
+			}
 			// Re-Value operand from EQU
 			String equCheck = operand.substring(1);
 			if(EQU.containsKey(equCheck)) {
 				operand = "#" + EQU.get(equCheck);
+			}
+			
+			String ldCheck = check.substring(0,2);
+			if(ldCheck.equals("LD")) {
+				ldCheck = check.substring(2);
+				SYMTAB.put(ldCheck,Integer.parseInt(operand.substring(1)));
 			}
 
 			if(SYMTAB.containsKey(operand)) {
@@ -390,7 +398,7 @@ public class Main extends Hashmaps{
 				if(temp.length() == 1){
 					temp = "0" + temp;
 				}
-				System.out.println(temp);
+				opcode.add(temp);
 			}
 
 			// FORMAT 2 ADDRESSING
@@ -399,7 +407,14 @@ public class Main extends Hashmaps{
 				if(temp.length() == 1) {
 					temp = "0" + temp;
 				}
-				System.out.println(temp);
+				String split[] = operand.split(",");
+				int r1 = SYMTAB.get(split[0]);
+				int r2 = SYMTAB.get(split[1]);
+				String R1 = String.valueOf(r1);
+				String R2 = String.valueOf(r2);
+				
+				opcode.add(temp+R1+R2);
+
 			}
 
 			// FORMAT 3 ADDRESSING
@@ -445,7 +460,10 @@ public class Main extends Hashmaps{
 				if(!Character.isLetter(operand.charAt(0))) {
 					operand = operand.substring(1, operand.length());
 				}
-				int address = SYMTAB.get(operand);
+				int address = 0;
+				if(SYMTAB.containsKey(operand)){
+					address = SYMTAB.get(operand);
+				}
 				String add = String.format("%X",address);
 				length = add.length();
 				for(int k = 0; k < (5-length);k++) {
@@ -553,15 +571,15 @@ public class Main extends Hashmaps{
     	init();
     	readFile();
 
-    	try {
+//    	try {
     		passOne();
-    	}
-    	catch (Exception e) {
-    		System.out.println("Pass one failed.");
-    		System.out.println("Error: " + e);
-    		System.out.println("Exiting...");
-    		System.exit(1);
-    	}
+//    	}
+//    	catch (Exception e) {
+//    		System.out.println("Pass one failed.");
+//    		System.out.println("Error: " + e);
+//    		System.out.println("Exiting...");
+//    		System.exit(1);
+//    	}
 
     	try {
         	passTwo();
